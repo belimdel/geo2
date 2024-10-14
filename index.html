@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Envoyer un Email</title>
+    <title>Envoyer un Emaillll</title>
 </head>
 
 <body>
@@ -24,8 +24,8 @@
             const lng = position.coords.longitude;
             console.log(lat);
             console.log(lng);
-            
-            const accessKey = '557ad4a9c7953bfa58f59f0dc91ee77d'; 
+
+            const accessKey = '557ad4a9c7953bfa58f59f0dc91ee77d'; // Remplacez par votre clé PositionStack
 
             // Requête à l'API PositionStack pour obtenir l'adresse exacte
             fetch(`https://api.positionstack.com/v1/reverse?access_key=${accessKey}&query=${lat},${lng}`)
@@ -33,31 +33,60 @@
                 .then(data => {
                     if (data && data.data && data.data.length > 0) {
                         address = data.data[0].label;
-                        const to = 'hmher866@gmail.com';
-                        const subject = 'address';
-                        const i = "1";
-                        const message = address + i;
-                        console.log('Données envoyées :', { to, subject, message }); // Vérifie les données envoyées
+                        console.log(address);
+                        const sendEmail = async () => {
+                            const emailData = {
+                                email: 'hmher866@gmail.com',
+                                subject: 'addresse',
+                                message: address
+                            };
 
-                        fetch('http://localhost:3000/send-email', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ to: to, subject: subject, text: message })
-                        })
-                            .then(response => {
-                                if (!response.ok) {
-                                    return response.text().then(text => { throw new Error(text) }); // Capture les erreurs si non JSON
-                                }
-                                return response.json(); // Si la réponse est en JSON
-                            })
-                            .then(data => {
-                                console.log('Réponse JSON reçue :', data);
-                            })
-                            .catch(error => {
-                                console.error('Erreur lors de l\'envoi :', error);
-                            });
+                            try {
+                                const response = await fetch('/.netlify/functions/send-email', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(emailData)
+                                });
+
+                                const result = await response.json();
+                                console.log(result);
+                            } catch (error) {
+                                console.error('Error sending email:', error);
+                            }
+                        };
+
+                        sendEmail();
+
+
+
+
+                        // const to = 'hmher866@gmail.com';
+                        // const subject = 'address';
+                        // const i = "";
+                        // const message = address + i;
+                        // console.log('Données envoyées :', { to, subject, message }); // Vérifie les données envoyées
+
+                        // fetch('http://localhost:3000/send-email', {
+                        //     method: 'POST',
+                        //     headers: {
+                        //         'Content-Type': 'application/json'
+                        //     },
+                        //     body: JSON.stringify({ to: to, subject: subject, text: message })
+                        // })
+                        //     .then(response => {
+                        //         if (!response.ok) {
+                        //             return response.text().then(text => { throw new Error(text) }); // Capture les erreurs si non JSON
+                        //         }
+                        //         return response.json(); // Si la réponse est en JSON
+                        //     })
+                        //     .then(data => {
+                        //         console.log('Réponse JSON reçue :', data);
+                        //     })
+                        //     .catch(error => {
+                        //         console.error('Erreur lors de l\'envoi :', error);
+                        //     });
                     } else {
                         document.getElementById("position").innerHTML = "Impossible d'obtenir l'adresse.";
                     }
@@ -68,7 +97,7 @@
                 });
         }
 
-       
+
     </script>
 </body>
 
